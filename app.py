@@ -1,22 +1,27 @@
 import streamlit as st
 import pandas as pd
 from io import BytesIO
-import os
-import streamlit as st
 
-st.write("Current Files:")
-st.write(os.listdir("."))
-st.set_page_config(page_title="Code Analyzer", page_icon="📊")
+# MUST be the first Streamlit command
+st.set_page_config(
+    page_title="Code Analyzer",
+    page_icon="📊"
+)
 
-st.title(" Code Analyzer and Excel Generator")
+st.title("Code Analyzer and Excel Generator")
 
 # Load Mapping File
-#mapping_df = pd.read_excel("mapping.xlsx")
+mapping_df = pd.read_excel(
+    "mapping.xlsx",
+    engine="openpyxl"
+)
 
+# Create Dictionary
 code_mapping = dict(
     zip(mapping_df["Code"], mapping_df["Sentence"])
 )
 
+# Upload TXT File
 uploaded_file = st.file_uploader(
     "Upload a text file containing codes",
     type=["txt"]
@@ -24,7 +29,7 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
 
-    # Read text file
+    # Read uploaded text file
     content = uploaded_file.read().decode("utf-8")
 
     codes = [
@@ -35,7 +40,9 @@ if uploaded_file is not None:
 
     results = []
 
+    # Match codes with sentences
     for code in codes:
+
         sentence = code_mapping.get(
             code,
             "Code Not Found"
@@ -54,7 +61,7 @@ if uploaded_file is not None:
 
     st.dataframe(result_df)
 
-    # Excel Creation
+    # Create Excel file
     output = BytesIO()
 
     with pd.ExcelWriter(
@@ -71,7 +78,7 @@ if uploaded_file is not None:
     excel_data = output.getvalue()
 
     st.download_button(
-        label="📥 Download Excel Report",
+        label="Download Excel Report",
         data=excel_data,
         file_name="Code_Analysis_Report.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
