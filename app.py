@@ -1,13 +1,17 @@
 import streamlit as st
 import pandas as pd
 from io import BytesIO
+import os
+import streamlit as st
 
+st.write("Current Files:")
+st.write(os.listdir("."))
 st.set_page_config(page_title="Code Analyzer", page_icon="📊")
 
 st.title(" Code Analyzer and Excel Generator")
 
 # Load Mapping File
-mapping_df = pd.read_excel("mapping.xlsx")
+#mapping_df = pd.read_excel("mapping.xlsx")
 
 code_mapping = dict(
     zip(mapping_df["Code"], mapping_df["Sentence"])
